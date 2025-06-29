@@ -1,0 +1,59 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env
+.env.*
+
+# VS Code / PyCharm config
+.vscode/
+.idea/
+
+# Log files
+*.log
+
+# Database (local)
+*.sqlite3
+*.db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Static/media/uploads - optional (if dynamically uploaded)
+static/uploads/
+media/
+
+# Migrations (optional if using Alembic generated files)
+alembic/versions/
+
+# Docker
+*.pid
+*.sock
+*.tar
+*.img
+*.container
+docker-compose.override.yml
+
+# Compiled files
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Coverage/test
+htmlcov/
+.coverage
+.tox/
+.nox/
+.cache/
+pytest_cache/
+
+# Jupyter notebooks (if not needed)
+*.ipynb

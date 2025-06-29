@@ -1,0 +1,28 @@
+# docker-compose.yml
+version: "3.9"
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: atm_go_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
