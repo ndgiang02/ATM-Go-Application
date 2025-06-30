@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Go - Trang Quản Trị</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px; /* Tăng chiều rộng để chứa nhiều cột hơn */
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-button {
+            padding: 12px 24px;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .tab-button.active {
+            color: #4f46e5;
+            border-color: #4f46e5;
+        }
+        .tab-button:hover:not(.active) {
+            color: #6d28d9;
+        }
+        .content-section {
+            display: none;
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+        .content-section.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top; /* Căn chỉnh nội dung lên trên */
+        }
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+            color: #4b5563;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+        tr:hover {
+            background-color: #f3f4f6;
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+        input[type="file"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background-color: #f9fafb;
+            cursor: pointer;
+        }
+        input[type="file"]::file-selector-button {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            background-color: #e0e7ff;
+            color: #4f46e5;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 15px;
+        }
+        input[type="file"]::file-selector-button:hover {
+            background-color: #c7d2fe;
+        }
+        .message-box {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            margin-top: 1.5rem;
+            display: none;
+        }
+        .message-box.bg-green-100 { color: #166534; background-color: #dcfce7; }
+        .message-box.bg-red-100 { color: #991b1b; background-color: #fee2e2; }
+        .message-box.bg-blue-100 { color: #1e40af; background-color: #e0f2fe; }
+    </style>
+</head>
+<body class="flex items-start justify-center min-h-screen">
+    <div class="container">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center">Trang Quản Trị ATM Go</h1>
+        
+        <!-- Tab Navigation -->
+        <div class="border-b border-gray-200 mb-6 flex justify-center">
+            <button class="tab-button active" onclick="showTab('dataView')">Xem Dữ Liệu</button>
+            <button class="tab-button" onclick="showTab('sqlUpload')">Tải Lên SQL</button>
+        </div>
+
+        <!-- Data View Section -->
+        <div id="dataView" class="content-section active">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Danh sách Địa điểm ATM</h2>
+            <div id="loadingData" class="text-center text-gray-500 hidden">Đang tải dữ liệu...</div>
+            <div id="dataError" class="message-box bg-red-100 hidden"></div>
+            <div class="overflow-x-auto">
+                <table id="atmDataTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tiêu đề</th>
+                            <th>Ngân hàng</th>
+                            <th>Địa chỉ</th>
+                            <th>Giờ mở cửa</th>
+                            <th>Điện thoại</th>
+                            <th>Đánh giá</th>
+                            <th>Mô tả</th>
+                            <th>Link</th>
+                            <th>Loại</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dữ liệu sẽ được chèn vào đây bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- SQL Upload Section -->
+        <div id="sqlUpload" class="content-section">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Tải Lên Tệp SQL</h2>
+            <form id="uploadForm" class="space-y-6">
+                <div class="mb-4">
+                    <label for="sqlFile" class="block text-gray-700 text-lg font-medium mb-2">Chọn tệp SQL:</label>
+                    <input type="file" id="sqlFile" name="file" accept=".sql" required class="focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+                <button type="submit" class="btn-primary w-full sm:w-auto">Tải Lên và Thực Thi SQL</button>
+            </form>
+            <div id="sqlMessage" class="message-box hidden" role="alert">
+                <p class="font-medium"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Chức năng Tab ---
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.content-section');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
+
+            // Khi chuyển sang tab dữ liệu, tải lại dữ liệu
+            if (tabId === 'dataView') {
+                fetchATMData();
+            }
+        }
+
+        // --- Chức năng Xem Dữ Liệu ---
+        const atmDataTableBody = document.querySelector('#atmDataTable tbody');
+        const loadingData = document.getElementById('loadingData');
+        const dataErrorDiv = document.getElementById('dataError');
+        const numColumns = 10; // Cập nhật số lượng cột của bảng
+
+        async function fetchATMData() {
+            atmDataTableBody.innerHTML = ''; // Xóa dữ liệu cũ
+            loadingData.classList.remove('hidden'); // Hiện thông báo tải
+            dataErrorDiv.classList.add('hidden'); // Ẩn lỗi cũ
+            dataErrorDiv.textContent = '';
+
+            try {
+                const response = await fetch('http://localhost:8000/admin/data'); // Vẫn gọi /admin/data
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Lỗi khi tải dữ liệu: ${response.status} - ${errorText}`);
+                }
+                const data = await response.json();
+                
+                loadingData.classList.add('hidden'); // Ẩn thông báo tải
+                if (data.length === 0) {
+                    atmDataTableBody.innerHTML = `<tr><td colspan="${numColumns}" class="text-center text-gray-500">Không có dữ liệu để hiển thị.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(item => {
+                    const row = atmDataTableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${item.title}</td>
+                        <td>${item.owner || item.bank_code}</td>
+                        <td>${item.address}</td>
+                        <td>${item.open_hours}</td>
+                        <td>${item.phone || 'N/A'}</td>
+                        <td>${item.review_rating || 'N/A'}</td>
+                        <td class="max-w-xs overflow-hidden text-ellipsis whitespace-nowrap" title="${item.descriptions}">${item.descriptions || 'Không có'}</td>
+                        <td><a href="${item.link}" target="_blank" class="text-blue-600 hover:underline">Xem bản đồ</a></td>
+                        <td>${item.type}</td>
+                    `;
+                    // Optional: Add ellipsis for long descriptions and title on hover
+                    const descriptionCell = row.cells[7]; // Assuming 8th cell is descriptions
+                    descriptionCell.style.maxWidth = '200px'; // Set max width for description column
+                    descriptionCell.style.overflow = 'hidden';
+                    descriptionCell.style.textOverflow = 'ellipsis';
+                    descriptionCell.style.whiteSpace = 'nowrap';
+                    descriptionCell.title = item.descriptions; // Add full text as tooltip
+                });
+
+            } catch (error) {
+                loadingData.classList.add('hidden'); // Ẩn thông báo tải
+                dataErrorDiv.classList.remove('hidden'); // Hiện thông báo lỗi
+                dataErrorDiv.classList.add('bg-red-100');
+                dataErrorDiv.textContent = `Không thể tải dữ liệu: ${error.message}. Vui lòng kiểm tra backend và kết nối.`;
+                console.error('Lỗi khi tải dữ liệu ATM:', error);
+            }
+        }
+
+        // Tải dữ liệu khi trang được tải lần đầu và tab dữ liệu được hiển thị
+        document.addEventListener('DOMContentLoaded', () => {
+            showTab('dataView'); // Mặc định hiển thị tab xem dữ liệu
+        });
+
+        // --- Chức năng Tải Lên SQL (tích hợp từ immersive trước) ---
+        const uploadForm = document.getElementById('uploadForm');
+        const sqlMessageDiv = document.getElementById('sqlMessage');
+        const sqlMessageText = sqlMessageDiv.querySelector('p');
+
+        function showSqlMessage(text, type) {
+            sqlMessageText.textContent = text;
+            sqlMessageDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-blue-100', 'text-blue-800');
+            if (type === 'success') {
+                sqlMessageDiv.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                sqlMessageDiv.classList.add('bg-red-100', 'text-red-800');
+            } else if (type === 'info') {
+                sqlMessageDiv.classList.add('bg-blue-100', 'text-blue-800');
+            }
+            sqlMessageDiv.classList.remove('hidden');
+        }
+
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('sqlFile');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                showSqlMessage('Vui lòng chọn một tệp SQL.', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                showSqlMessage('Đang tải lên và thực thi...', 'info');
+
+                const response = await fetch('http://localhost:8000/admin/import_sql', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    showSqlMessage(`Thành công: ${result.message}`, 'success');
+                    uploadForm.reset();
+                } else {
+                    const errorData = await response.json();
+                    console.error('Lỗi khi tải lên tệp SQL:', response.status, errorData);
+                    showSqlMessage(`Đã xảy ra lỗi (${response.status}): ${errorData.detail || 'Không xác định'}. Vui lòng thử lại.`, 'error');
+                }
+
+            } catch (error) {
+                console.error('Lỗi mạng hoặc lỗi hệ thống khi tải lên SQL:', error);
+                showSqlMessage('Đã xảy ra lỗi mạng hoặc lỗi hệ thống. Vui lòng kiểm tra kết nối hoặc log server.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
