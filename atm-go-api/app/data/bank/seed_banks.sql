@@ -1,12 +1,11 @@
--- Tạo bảng bank
 CREATE TABLE IF NOT EXISTS bank (
-    code VARCHAR(20) PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(20) UNIQUE NOT NULL,
     name TEXT NOT NULL,
     short_name TEXT,
     logo_url TEXT
 );
 
--- Chèn dữ liệu vào bảng bank
 INSERT INTO bank (code, name, short_name, logo_url) VALUES ('VCB', 'Ngân hàng TMCP Ngoại thương Việt Nam', 'Vietcombank', '/static/logo/vietcombank.png') ON CONFLICT (code) DO NOTHING;
 INSERT INTO bank (code, name, short_name, logo_url) VALUES ('TCB', 'Ngân hàng TMCP Kỹ thương Việt Nam', 'Techcombank', '/static/logo/techcombank.png') ON CONFLICT (code) DO NOTHING;
 INSERT INTO bank (code, name, short_name, logo_url) VALUES ('MB', 'Ngân hàng TMCP Quân đội', 'MB Bank', '/static/logo/mbbank.png') ON CONFLICT (code) DO NOTHING;
@@ -56,23 +55,3 @@ INSERT INTO bank (code, name, short_name, logo_url) VALUES ('BNP', 'Ngân hàng 
 INSERT INTO bank (code, name, short_name, logo_url) VALUES ('DBVN', 'Ngân hàng TNHH MTV Deutsche Bank Việt Nam', 'Deutsche Bank Vietnam', '/static/logo/deutschebank.png') ON CONFLICT (code) DO NOTHING;
 INSERT INTO bank (code, name, short_name, logo_url) VALUES ('CATHAY', 'Ngân hàng TNHH MTV Cathay United Bank', 'Cathay United Bank', '/static/logo/cathayunitedbank.png') ON CONFLICT (code) DO NOTHING;
 INSERT INTO bank (code, name, short_name, logo_url) VALUES ('VBSP', 'Ngân hàng Chính sách Xã hội', 'VBSP', '/static/logo/vbsp.png') ON CONFLICT (code) DO NOTHING;
-
--- Tạo bảng locations
-CREATE TABLE IF NOT EXISTS locations (
-    id SERIAL PRIMARY KEY,
-    link TEXT,
-    title TEXT,
-    category TEXT,
-    address TEXT,
-    open_hours TEXT,
-    website TEXT,
-    phone TEXT,
-    review_rating FLOAT,
-    latitude DOUBLE PRECISION,
-    longitude DOUBLE PRECISION,
-    descriptions TEXT,
-    owner TEXT,
-    bank_code VARCHAR(10),
-    type VARCHAR(20),
-    FOREIGN KEY (bank_code) REFERENCES bank(code)
-);
