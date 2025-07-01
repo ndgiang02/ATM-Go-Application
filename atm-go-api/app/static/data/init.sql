@@ -1,5 +1,6 @@
 -- Tạo bảng bank
 CREATE TABLE IF NOT EXISTS bank (
+    id SERIAL,
     code VARCHAR(20) PRIMARY KEY,
     name TEXT NOT NULL,
     short_name TEXT,

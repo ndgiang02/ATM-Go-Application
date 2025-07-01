@@ -132,6 +132,7 @@
                 <table id="bankDataTable">
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th>Mã</th>
                             <th>Tên</th>
                             <th>Tên ngắn</th>
@@ -238,7 +239,7 @@
                     row.innerHTML = `
                         <td>${item.id}</td>
                         <td>${item.title}</td>
-                        <td>${item.owner || item.bank_code}</td>
+                        <td>${item.bank_code}</td>
                         <td>${item.address}</td>
                         <td>${item.open_hours}</td>
                         <td>${item.phone || 'N/A'}</td>
@@ -291,6 +292,7 @@
                 data.forEach(item => {
                     const row = bankDataTableBody.insertRow();
                     row.innerHTML = `
+                        <td>${item.id}</td>
                         <td>${item.code}</td>
                         <td>${item.name}</td>
                         <td>${item.short_name || ''}</td>
@@ -310,7 +312,7 @@
 
         // Tải dữ liệu khi trang được tải lần đầu và tab dữ liệu được hiển thị
         document.addEventListener('DOMContentLoaded', () => {
-            showTab('dataView'); // Mặc định hiển thị tab xem dữ liệu
+            showTab('bankView'); // Mặc định hiển thị tab xem dữ liệu
         });
 
         // --- Chức năng Tải Lên SQL (tích hợp từ immersive trước) ---

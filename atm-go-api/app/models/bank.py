@@ -1,9 +1,9 @@
 # app/models/bank.py
 from sqlalchemy import Column, Integer, String, Boolean
-from app.core.database import Base
+from app.models.base import Base
 
 class Bank(Base):
-    __tablename__ = "banks"
+    __tablename__ = "bank"
 
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String, unique=True, nullable=False)
