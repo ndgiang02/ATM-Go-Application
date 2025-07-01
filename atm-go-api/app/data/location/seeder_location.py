@@ -63,4 +63,4 @@ def generate_sql(bank_csv: str, location_csv: str, output_sql: str):
     print(f"✅ Seeder file created: {output_sql}")
 
 if __name__ == "__main__":
-    generate_sql("bank.csv", "cdm_output.csv", "locations.sql")
+    generate_sql("bank.csv", "bank_output.csv", "locations.sql")

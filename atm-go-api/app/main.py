@@ -6,6 +6,8 @@ from fastapi.responses import RedirectResponse, HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import UploadFile
 from app.core.database import engine
+from app.admin.import_sql import execute_sql_file
+from sqlalchemy import text
 import asyncpg
 
 app = FastAPI(title="ATM Go API")
@@ -44,19 +46,6 @@ async def get_db_connection():
         yield connection
 
 # --- SQL Upload ---
-
-async def execute_sql_file(file: UploadFile):
-    sql_bytes = await file.read()
-    sql_text = sql_bytes.decode("utf-8")
-
-    with engine.connect() as connection:
-        try:
-            connection.exec_driver_sql(sql_text)
-            connection.commit()
-        except Exception as e:
-            print(f"Lỗi khi thực thi file SQL: {e}")
-            raise
-
 @app.post("/admin/import_sql")
 async def import_sql(file: UploadFile):
     try:
@@ -92,12 +81,11 @@ async def admin_dashboard(request: Request):
 async def admin_sql_page(request: Request):
     return templates.TemplateResponse("admin_import_sql.html", {"request": request})
 
-# --- Lấy dữ liệu ATM ---
 @app.get("/admin/data", response_model=List[Dict[str, Union[str, float, int, None]]])
 async def get_atm_locations_data(conn: asyncpg.Connection = Depends(get_db_connection)):
     query = """
     SELECT 
-        id, link, title, category, address, open_hours, 
+        link, title, category, address, open_hours, 
         website, phone, review_rating, latitude, longitude, 
         descriptions, owner, bank_code, type
     FROM locations;
@@ -108,6 +96,24 @@ async def get_atm_locations_data(conn: asyncpg.Connection = Depends(get_db_conne
     except Exception as e:
         print(f"Lỗi khi truy vấn dữ liệu từ PostgreSQL: {e}")
         raise HTTPException(status_code=500, detail=f"Lỗi khi tải dữ liệu từ database: {str(e)}")
+
+@app.get("/admin/bank", response_model=List[Dict[str, Union[str, None]]])
+async def get_bank_data(conn: asyncpg.Connection = Depends(get_db_connection)):
+    query = """
+    SELECT 
+        code, 
+        name, 
+        short_name, 
+        logo_url
+    FROM bank;
+    """
+    try:
+        records = await conn.fetch(query)
+        return [dict(record) for record in records]
+    except Exception as e:
+        print(f"Lỗi khi truy vấn dữ liệu từ PostgreSQL: {e}")
+        raise HTTPException(status_code=500, detail=f"Lỗi khi tải dữ liệu từ database: {str(e)}")
+
 
 # --- Redirect root ---
 @app.get("/")

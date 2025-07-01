@@ -13,7 +13,7 @@
             color: #333;
         }
         .container {
-            max-width: 1200px; /* Tăng chiều rộng để chứa nhiều cột hơn */
+            max-width: 1200px;
             margin: 40px auto;
             padding: 30px;
             background-color: #ffffff;
@@ -119,8 +119,30 @@
         
         <!-- Tab Navigation -->
         <div class="border-b border-gray-200 mb-6 flex justify-center">
+            <button class="tab-button" onclick="showTab('bankView')">Ngân Hàng</button>
             <button class="tab-button active" onclick="showTab('dataView')">Xem Dữ Liệu</button>
             <button class="tab-button" onclick="showTab('sqlUpload')">Tải Lên SQL</button>
+        </div>
+
+        <div id="bankView" class="content-section">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Danh sách Ngân Hàng</h2>
+            <div id="loadingBank" class="text-center text-gray-500 hidden">Đang tải dữ liệu ngân hàng...</div>
+            <div id="bankError" class="message-box bg-red-100 hidden"></div>
+            <div class="overflow-x-auto">
+                <table id="bankDataTable">
+                    <thead>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Tên</th>
+                            <th>Tên ngắn</th>
+                            <th>Logo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dữ liệu ngân hàng sẽ được chèn ở đây -->
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <!-- Data View Section -->
@@ -169,7 +191,7 @@
 
     <script>
         // --- Chức năng Tab ---
-        function showTab(tabId) {
+         function showTab(tabId) {
             const tabs = document.querySelectorAll('.content-section');
             tabs.forEach(tab => tab.classList.remove('active'));
 
@@ -179,33 +201,33 @@
             document.getElementById(tabId).classList.add('active');
             document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
 
-            // Khi chuyển sang tab dữ liệu, tải lại dữ liệu
             if (tabId === 'dataView') {
                 fetchATMData();
             }
+            if (tabId === 'bankView') {
+                fetchBankData();
+            }
         }
-
-        // --- Chức năng Xem Dữ Liệu ---
         const atmDataTableBody = document.querySelector('#atmDataTable tbody');
         const loadingData = document.getElementById('loadingData');
         const dataErrorDiv = document.getElementById('dataError');
-        const numColumns = 10; // Cập nhật số lượng cột của bảng
-
+        const numColumns = 10;
         async function fetchATMData() {
-            atmDataTableBody.innerHTML = ''; // Xóa dữ liệu cũ
-            loadingData.classList.remove('hidden'); // Hiện thông báo tải
-            dataErrorDiv.classList.add('hidden'); // Ẩn lỗi cũ
+        
+            atmDataTableBody.innerHTML = ''; 
+            loadingData.classList.remove('hidden'); 
+            dataErrorDiv.classList.add('hidden'); 
             dataErrorDiv.textContent = '';
 
             try {
-                const response = await fetch('http://localhost:8000/admin/data'); // Vẫn gọi /admin/data
+                const response = await fetch('http://localhost:8000/admin/data');
                 if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(`Lỗi khi tải dữ liệu: ${response.status} - ${errorText}`);
                 }
                 const data = await response.json();
                 
-                loadingData.classList.add('hidden'); // Ẩn thông báo tải
+                loadingData.classList.add('hidden');
                 if (data.length === 0) {
                     atmDataTableBody.innerHTML = `<tr><td colspan="${numColumns}" class="text-center text-gray-500">Không có dữ liệu để hiển thị.</td></tr>`;
                     return;
@@ -225,21 +247,64 @@
                         <td><a href="${item.link}" target="_blank" class="text-blue-600 hover:underline">Xem bản đồ</a></td>
                         <td>${item.type}</td>
                     `;
-                    // Optional: Add ellipsis for long descriptions and title on hover
-                    const descriptionCell = row.cells[7]; // Assuming 8th cell is descriptions
-                    descriptionCell.style.maxWidth = '200px'; // Set max width for description column
+                    const descriptionCell = row.cells[7]; 
+                    descriptionCell.style.maxWidth = '200px'; 
                     descriptionCell.style.overflow = 'hidden';
                     descriptionCell.style.textOverflow = 'ellipsis';
                     descriptionCell.style.whiteSpace = 'nowrap';
-                    descriptionCell.title = item.descriptions; // Add full text as tooltip
+                    descriptionCell.title = item.descriptions; 
                 });
 
             } catch (error) {
-                loadingData.classList.add('hidden'); // Ẩn thông báo tải
-                dataErrorDiv.classList.remove('hidden'); // Hiện thông báo lỗi
+                loadingData.classList.add('hidden'); 
+                dataErrorDiv.classList.remove('hidden'); 
                 dataErrorDiv.classList.add('bg-red-100');
                 dataErrorDiv.textContent = `Không thể tải dữ liệu: ${error.message}. Vui lòng kiểm tra backend và kết nối.`;
                 console.error('Lỗi khi tải dữ liệu ATM:', error);
+            }
+        }
+
+          const bankDataTableBody = document.querySelector('#bankDataTable tbody');
+        const loadingBank = document.getElementById('loadingBank');
+        const bankErrorDiv = document.getElementById('bankError');
+
+        async function fetchBankData() {
+            bankDataTableBody.innerHTML = '';
+            loadingBank.classList.remove('hidden');
+            bankErrorDiv.classList.add('hidden');
+            bankErrorDiv.textContent = '';
+
+            try {
+                const response = await fetch('http://localhost:8000/admin/bank');
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Lỗi khi tải dữ liệu: ${response.status} - ${errorText}`);
+                }
+                const data = await response.json();
+
+                loadingBank.classList.add('hidden');
+                if (data.length === 0) {
+                    bankDataTableBody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500">Không có dữ liệu ngân hàng.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(item => {
+                    const row = bankDataTableBody.insertRow();
+                    row.innerHTML = `
+                        <td>${item.code}</td>
+                        <td>${item.name}</td>
+                        <td>${item.short_name || ''}</td>
+                        <td>
+                            ${item.logo_url ? `<img src="${item.logo_url}" alt="Logo" style="height:32px;max-width:80px;">` : ''}
+                        </td>
+                    `;
+                });
+            } catch (error) {
+                loadingBank.classList.add('hidden');
+                bankErrorDiv.classList.remove('hidden');
+                bankErrorDiv.classList.add('bg-red-100');
+                bankErrorDiv.textContent = `Không thể tải dữ liệu ngân hàng: ${error.message}. Vui lòng kiểm tra backend và kết nối.`;
+                console.error('Lỗi khi tải dữ liệu ngân hàng:', error);
             }
         }
 
