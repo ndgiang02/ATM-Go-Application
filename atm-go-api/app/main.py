@@ -64,6 +64,24 @@ async def import_sql(file: UploadFile):
         return JSONResponse(content={"message": f"File '{file.filename}' đã được thực thi thành công trên PostgreSQL!"})
     except Exception as e:
         return JSONResponse(status_code=500, content={"detail": f"Lỗi khi thực thi file SQL: {str(e)}"})
+    
+    
+@app.post("/admin/upload_sql")   
+async def upload_sql(file: UploadFile):
+    try:
+        # Kết nối tới PostgreSQL
+        conn = await asyncpg.connect(DATABASE_URL)
+
+        content = (await file.read()).decode("utf-8")
+        statements = content.split(";")
+        for statement in statements:
+            stmt = statement.strip()
+            if stmt:
+                await conn.execute(stmt)
+        await conn.close()
+        return {"message": "Upload và thực thi SQL thành công!"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Lỗi khi thực thi SQL: {str(e)}")
 
 # --- Trang quản trị & SQL ---
 @app.get("/admin", response_class=HTMLResponse)

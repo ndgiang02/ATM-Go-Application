@@ -283,7 +283,7 @@
             try {
                 showSqlMessage('Đang tải lên và thực thi...', 'info');
 
-                const response = await fetch('http://localhost:8000/admin/import_sql', {
+                const response = await fetch('http://localhost:8000/admin/upload_sql', {
                     method: 'POST',
                     body: formData
                 });
