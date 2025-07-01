@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List, Dict, Union
+from typing import List
 from app.dependencies import get_db_connection
 from app.crud.bank import get_all_banks
 from app.schemas.bank_shemas import BankOut

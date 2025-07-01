@@ -1,13 +1,7 @@
 import os
-from typing import List, Dict, Union
-from fastapi import FastAPI, Request, UploadFile, HTTPException, Depends
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import RedirectResponse, HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
-from fastapi import UploadFile
-from app.models.base import engine
-from app.admin.import_sql import execute_sql_file
-from app.routers.admin import router as admin
 
 from app.routers import admin
 from app.routers import bank
@@ -43,7 +37,6 @@ async def startup():
 async def shutdown():
     if db_pool:
         await db_pool.close()
-        print("Đã đóng kết nối PostgreSQL.")
 
 async def get_db_connection():
     async with db_pool.acquire() as connection:

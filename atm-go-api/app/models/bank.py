@@ -1,6 +1,6 @@
 # app/models/bank.py
 from sqlalchemy import Column, Integer, String, Boolean
-from app.models.base import Base
+from app.db.database import Base
 
 class Bank(Base):
     __tablename__ = "bank"

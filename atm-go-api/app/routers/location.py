@@ -1,22 +1,27 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.orm import Session
 from typing import List, Dict, Union
-import asyncpg
 from app.dependencies import get_db_connection
+from app.crud.location import get_all_locations
+from app.schemas.loacation_schemas import LocationOut  
 
 router = APIRouter()
 
-@router.get("/admin/data", response_model=List[Dict[str, Union[str, float, int, None]]])
-async def get_atm_locations_data(conn: asyncpg.Connection = Depends(get_db_connection)):
-    query = """
-    SELECT 
-        id, link, title, category, address, open_hours, 
-        website, phone, review_rating, latitude, longitude, 
-        descriptions, owner, bank_code, type
-    FROM locations;
-    """
+@router.get("/admin/location", response_model=List[LocationOut])
+def get_bank_data(db: Session = Depends(get_db_connection)):
     try:
-        records = await conn.fetch(query)
-        return [dict(record) for record in records]
+        return get_all_locations(db)
     except Exception as e:
-        print(f"Lỗi khi truy vấn dữ liệu từ PostgreSQL: {e}")
-        raise HTTPException(status_code=500, detail=f"Lỗi khi tải dữ liệu từ database: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/admin/location/search", response_model=List[LocationOut])
+def search_banks(
+    bank_code: str = Query(..., description="Mã ngân hàng"),
+    type: str = Query(..., description="Loại ngân hàng"),
+    db: Session = Depends(get_db_connection)
+):
+    try:
+        from app.crud.location import get_banks_by_code_and_type
+        return get_banks_by_code_and_type(db, bank_code, type)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

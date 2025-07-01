@@ -3505,20 +3505,6 @@ INSERT INTO locations (
                     descriptions, owner,
                     bank_code, type
                 ) VALUES (
-                    'https://www.google.com/maps/place/BAOVIET+Bank+-+PGD+V%C4%83n+Mi%E1%BA%BFu/data=!4m7!3m6!1s0x3135ab9a28317887:0x2613c8668624ac3b!8m2!3d21!4d105!16s%2Fg%2F1hc16yxf4!19sChIJh3gxKJqrNTERO6wkhmbIEyY?authuser=0&hl=vi&rclk=1', 'BAOVIET Bank - PGD Văn Miếu', 'Ngân hàng đầu tư', 'nbsp;, 71 P. Ngô Sỹ Liên, Văn Miếu, Đống Đa, Hà Nội 010000', 
-                    '{"Chủ Nhật":["Đóng cửa"],"Thứ Ba":["08:00–16:00"],"Thứ Bảy":["08:00–12:00"],"Thứ Hai":["08:00–16:00"],"Thứ Năm":["08:00–16:00"],"Thứ Sáu":["08:00–16:00"],"Thứ Tư":["08:00–16:00"]}', '', 
-                    '024 3732 6506', 3.7, 
-                    21.02604, 105.838461, 
-                   '',
-                     '{"id":"109261146784394609259","name":"BAOVIET Bank - PGD Văn Miếu (Chủ sở hữu)","link":"https://www.google.com/maps/contrib/109261146784394609259"}', 
-                    'BAOVIET', 'branch'
-                );
-INSERT INTO locations (
-                    link, title, category, address, open_hours,
-                    website, phone, review_rating, latitude, longitude,
-                    descriptions, owner,
-                    bank_code, type
-                ) VALUES (
                     'https://www.google.com/maps/place/GP+Bank+B%C3%B9i+Th%E1%BB%8B+Xu%C3%A2n/data=!4m7!3m6!1s0x3135ab8b0b6c7185:0xe6de8c71af80390!8m2!3d21!4d105!16s%2Fg%2F1hc0rcvxz!19sChIJhXFsC4urNTERkAP4GsfobQ4?authuser=0&hl=vi&rclk=1', 'GP Bank Bùi Thị Xuân', 'Ngân hàng', '121 P. Bùi Thị Xuân, Lê Đại Hành, Hai Bà Trưng, Hà Nội', 
                     '{}', '', 
                     '024 3974 8436', 3.0, 
