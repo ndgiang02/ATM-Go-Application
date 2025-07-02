@@ -221,7 +221,7 @@
             dataErrorDiv.textContent = '';
 
             try {
-                const response = await fetch('http://localhost:8000/admin/location');
+                const response = await fetch('http://localhost:8000/location/get-all-location');
                 if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(`Lỗi khi tải dữ liệu: ${response.status} - ${errorText}`);
