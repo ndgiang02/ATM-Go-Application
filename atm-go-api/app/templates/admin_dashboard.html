@@ -191,7 +191,6 @@
     </div>
 
     <script>
-        // --- Chức năng Tab ---
          function showTab(tabId) {
             const tabs = document.querySelectorAll('.content-section');
             tabs.forEach(tab => tab.classList.remove('active'));
@@ -221,7 +220,7 @@
             dataErrorDiv.textContent = '';
 
             try {
-                const response = await fetch('http://localhost:8000/location/get-all-location');
+                const response = await fetch('http://localhost:8000/api/location/get-all-location');
                 if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(`Lỗi khi tải dữ liệu: ${response.status} - ${errorText}`);
@@ -276,7 +275,7 @@
             bankErrorDiv.textContent = '';
 
             try {
-                const response = await fetch('http://localhost:8000/admin/bank');
+                const response = await fetch('http://localhost:8000/api/bank/get-bank');
                 if (!response.ok) {
                     const errorText = await response.text();
                     throw new Error(`Lỗi khi tải dữ liệu: ${response.status} - ${errorText}`);

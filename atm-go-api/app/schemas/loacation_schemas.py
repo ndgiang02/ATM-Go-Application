@@ -22,6 +22,8 @@ class LocationCreate(LocationBase):
 
 class LocationOut(LocationBase):
     id: int
+    logo: Optional[str]
+    distance: Optional[float] = None
 
     class Config:
         orm_mode = True

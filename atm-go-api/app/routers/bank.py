@@ -7,7 +7,7 @@ from app.schemas.bank_shemas import BankOut
 
 router = APIRouter()
 
-@router.get("/admin/bank", response_model=List[BankOut])
+@router.get("/api/bank/get-bank", response_model=List[BankOut])
 def get_bank_data(db: Session = Depends(get_db_connection)):
     try:
         return get_all_banks(db)
